@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bg" class="dark scroll-smooth">
+<html lang="bg" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,32 +35,58 @@
     <style>
       body {
         font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        scroll-behavior: smooth;
+      }
+      #slider-container {
+        touch-action: none;
+      }
+
+      /* Scroll Animation Classes */
+      .reveal-up {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .reveal-left {
+        opacity: 0;
+        transform: translateX(-30px);
+        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .reveal-right {
+        opacity: 0;
+        transform: translateX(30px);
+        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .reveal-active {
+        opacity: 1;
+        transform: translate(0, 0);
       }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 antialiased selection:bg-indigo-500 selection:text-white">
+<body class="bg-zinc-950 text-zinc-100 antialiased selection:bg-indigo-500 selection:text-white min-h-screen overflow-x-hidden">
 
     <!-- NAVIGATION -->
     <header class="fixed top-0 left-0 right-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/60">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="#" class="font-extrabold text-base md:text-lg tracking-wider text-white hover:text-indigo-400 transition shrink-0">
+            <a href="#" onclick="scrollToSection('showreel'); return false;" class="font-extrabold text-base md:text-lg tracking-wider text-white hover:text-indigo-400 transition shrink-0 cursor-pointer">
                 ALEXGENOV<span class="text-indigo-500">.</span>MOTION
             </a>
             <nav class="hidden md:flex space-x-5 text-xs lg:text-sm font-medium text-zinc-400">
-                <a href="#showreel" class="hover:text-white transition whitespace-nowrap" data-en="Showreel" data-bg="Showreel">Showreel</a>
-                <a href="#motion-graphics" class="hover:text-white transition whitespace-nowrap" data-en="Motion Graphics" data-bg="Моушън Графика">Motion Graphics</a>
-                <a href="#documentary" class="hover:text-white transition whitespace-nowrap" data-en="Documentary" data-bg="Документални">Documentary</a>
-                <a href="#color-grading" class="hover:text-white transition whitespace-nowrap" data-en="Color Grading" data-bg="Цветове">Color Grading</a>
-                <a href="#tools" class="hover:text-white transition whitespace-nowrap" data-en="Tools" data-bg="Инструменти">Tools</a>
-                <a href="#about" class="hover:text-white transition whitespace-nowrap" data-en="About" data-bg="За мен">About</a>
+                <a href="#showreel" onclick="scrollToSection('showreel'); return false;" class="hover:text-white transition whitespace-nowrap cursor-pointer" data-en="Showreel" data-bg="Showreel">Showreel</a>
+                <a href="#motion-graphics" onclick="scrollToSection('motion-graphics'); return false;" class="hover:text-white transition whitespace-nowrap cursor-pointer" data-en="Motion Graphics" data-bg="Моушън Графика">Motion Graphics</a>
+                <a href="#documentary" onclick="scrollToSection('documentary'); return false;" class="hover:text-white transition whitespace-nowrap cursor-pointer" data-en="Documentary" data-bg="Документални">Documentary</a>
+                <a href="#color-grading" onclick="scrollToSection('color-grading'); return false;" class="hover:text-white transition whitespace-nowrap cursor-pointer" data-en="Color Grading" data-bg="Цветове">Color Grading</a>
+                <a href="#tools" onclick="scrollToSection('tools'); return false;" class="hover:text-white transition whitespace-nowrap cursor-pointer" data-en="Tools" data-bg="Инструменти">Tools</a>
+                <a href="#about" onclick="scrollToSection('about'); return false;" class="hover:text-white transition whitespace-nowrap cursor-pointer" data-en="About" data-bg="За мен">About</a>
+                <a href="#testimonials" onclick="scrollToSection('testimonials'); return false;" class="hover:text-white transition whitespace-nowrap cursor-pointer" data-en="Feedback" data-bg="Отзиви">Feedback</a>
             </nav>
             <div class="flex items-center space-x-3 shrink-0">
                 <!-- Language Switcher Button -->
                 <button id="lang-toggle" onclick="toggleLanguage()" class="px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 hover:border-indigo-500/50 text-zinc-300 rounded-lg text-xs font-bold transition shadow">
-                    BG / <span class="text-indigo-400">EN</span>
+                    <span class="text-indigo-400" id="lang-bg-span">BG</span> / <span id="lang-en-span">EN</span>
                 </button>
-                <a href="https://www.instagram.com/alexgenov.motion/" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs md:text-sm font-semibold transition shadow-lg shadow-indigo-600/20" data-en="Instagram" data-bg="Instagram">
-                    Instagram
+                <a href="https://www.instagram.com/alexgenov.motion/" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs md:text-sm font-semibold transition shadow-lg shadow-indigo-600/20" data-en="Get in touch" data-bg="Свържи се с мен">
+                    Get in touch
                 </a>
             </div>
         </div>
@@ -70,7 +96,7 @@
 
         <!-- HERO SECTION (SHOWREEL) -->
         <section id="showreel" class="max-w-5xl mx-auto px-6 pt-10">
-            <div class="text-center mb-10 space-y-4">
+            <div class="text-center mb-10 space-y-4 reveal-up">
                 <div class="inline-block px-3 py-1 bg-indigo-500/10 border border-indigo-500/30 rounded-full text-indigo-400 text-xs font-semibold uppercase tracking-widest" data-en="Specialized Video Editor" data-bg="Специализиран Видео Монтажист">
                     Specialized Video Editor
                 </div>
@@ -83,9 +109,9 @@
             </div>
             
             <!-- Main Video Showreel Frame -->
-            <div class="relative aspect-video w-full rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 shadow-2xl shadow-indigo-500/10">
+            <div class="relative aspect-video w-full rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 shadow-2xl shadow-indigo-500/10 reveal-up">
                 <video controls preload="metadata" class="w-full h-full object-cover">
-                    <source src="showreel.mp4" type="video/mp4">
+                    <source src="videos/videos-showreel/showreel.mp4" type="video/mp4">
                     Вашият браузър не поддържа видео тага.
                 </video>
             </div>
@@ -93,7 +119,7 @@
 
         <!-- MOTION GRAPHICS SECTION -->
         <section id="motion-graphics" class="max-w-5xl mx-auto px-6">
-            <div class="text-center mb-16">
+            <div class="text-center mb-16 reveal-up">
                 <h2 class="text-4xl font-extrabold tracking-tight" data-en="My work" data-bg="Моите проекти">My work</h2>
                 <p class="text-indigo-400 text-xl font-medium mt-2" data-en="— Motion graphics —" data-bg="— Моушън графика —">— Motion graphics —</p>
             </div>
@@ -101,12 +127,12 @@
             <div class="space-y-20">
                 <!-- Motion Project 1 -->
                 <div class="grid md:grid-cols-2 gap-10 items-center">
-                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg">
+                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg reveal-left">
                         <video controls preload="metadata" class="w-full h-full object-cover">
-                            <source src="motion1.mp4" type="video/mp4">
+                            <source src="videos/videos-motion-graphics/motion1.mp4" type="video/mp4">
                         </video>
                     </div>
-                    <div class="space-y-3">
+                    <div class="space-y-3 reveal-right">
                         <h3 class="text-2xl font-bold text-white" data-en="Apple style map animation" data-bg="Apple style map animation">Apple style map animation</h3>
                         <p class="text-zinc-400 leading-relaxed text-sm" data-en="UI/UX motion design and interface simulation. Cursor animation, smooth window and navigation map panning in Apple Glassmorphism style (dark frosted glass panels), dynamic location and route plotting." data-bg="UI/UX моушън дизайн и интерфейсна симулация. Анимация на интерактивен курсор, плавно преливане на прозорци и навигационни карти в стил Apple Glassmorphism (стъклени панели с тъмни фонове и замъгляване), динамично добавяне на локации и маршрути.">
                             UI/UX моушън дизайн и интерфейсна симулация. Анимация на интерактивен курсор, плавно преливане на прозорци и навигационни карти в стил Apple Glassmorphism (стъклени панели с тъмни фонове и замъгляване), динамично добавяне на локации и маршрути.
@@ -116,27 +142,27 @@
 
                 <!-- Motion Project 2 -->
                 <div class="grid md:grid-cols-2 gap-10 items-center">
-                    <div class="space-y-3 md:order-1 order-2">
+                    <div class="space-y-3 md:order-1 order-2 reveal-left">
                         <h3 class="text-2xl font-bold text-white" data-en="High-End Motion Graphic" data-bg="High-End Motion Graphic">High-End Motion Graphic</h3>
                         <p class="text-zinc-400 leading-relaxed text-sm" data-en="Financial motion graphics with curves and graphs. Spline curve timeline animation, floating glassmorphism panels, value marker synchronization, and fine typography animation." data-bg="Финансова моушън графика с криви и графики. Анимиране на динамични графични криви (Spline curves) по времева линия, поява на плаващи стъклени панели (Glassmorphism), синхронизация с маркери за стойности и фина типографска анимация.">
                             Финансова моушън графика с криви и графики. Анимиране на динамични графични криви (Spline curves) по времева линия, поява на плаващи стъклени панели (Glassmorphism), синхронизация с маркери за стойности и фина типографска анимация.
                         </p>
                     </div>
-                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg md:order-2 order-1">
+                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg md:order-2 order-1 reveal-right">
                         <video controls preload="metadata" class="w-full h-full object-cover">
-                            <source src="motion2.mp4" type="video/mp4">
+                            <source src="videos/videos-motion-graphics/motion2.mp4" type="video/mp4">
                         </video>
                     </div>
                 </div>
 
                 <!-- Motion Project 3 -->
                 <div class="grid md:grid-cols-2 gap-10 items-center">
-                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg">
+                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg reveal-left">
                         <video controls preload="metadata" class="w-full h-full object-cover">
-                            <source src="motion3.mp4" type="video/mp4">
+                            <source src="videos/videos-motion-graphics/motion3.mp4" type="video/mp4">
                         </video>
                     </div>
-                    <div class="space-y-3">
+                    <div class="space-y-3 reveal-right">
                         <h3 class="text-2xl font-bold text-white" data-en="High-End Motion Graphic" data-bg="High-End Motion Graphic">High-End Motion Graphic</h3>
                         <p class="text-zinc-400 leading-relaxed text-sm" data-en="3D motion intro/teaser. Rotation and depth arrangement of numbered 3D cubes, center animated pill button with solid drop shadows and smooth text revealing." data-bg="3D моушън интро / тизър. Ротация и дълбочинно подреждане на 3D кубове с номера, централно анимиране на изскачащ капсулен елемент (pill button) с плътно изградени сенки и плавно разкриване на текст.">
                             3D моушън интро / тизър. Ротация и дълбочинно подреждане на 3D кубове с номера, централно анимиране на изскачащ капсулен елемент (pill button) с плътно изградени сенки и плавно разкриване на текст.
@@ -146,15 +172,15 @@
 
                 <!-- Motion Project 4 -->
                 <div class="grid md:grid-cols-2 gap-10 items-center">
-                    <div class="space-y-3 md:order-1 order-2">
+                    <div class="space-y-3 md:order-1 order-2 reveal-left">
                         <h3 class="text-2xl font-bold text-white" data-en="Stunning Motion Graphics" data-bg="Stunning Motion Graphics">Stunning Motion Graphics</h3>
                         <p class="text-zinc-400 leading-relaxed text-sm" data-en="Interactive software form and search engine. Cursor click simulation on start button, real-time text input expansion, warning info banners, and depth of field effect on a dark grid mesh background." data-bg="Интерактивна софтуерна форма и търсачка. Симулация на кликване с курсор върху бутон за старт, разширяване на текстови полета в реално време, поява на предупредителни информационни банери и работа с дълбочина на кадъра (depth of field) върху тъмна мрежеста сет основа.">
                             Интерактивна софтуерна форма и търсачка. Симулация на кликване с курсор върху бутон за старт, разширяване на текстови полета в реално време, поява на предупредителни информационни банери и работа с дълбочина на кадъра (depth of field) върху тъмна мрежеста сет основа.
                         </p>
                     </div>
-                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg md:order-2 order-1">
+                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg md:order-2 order-1 reveal-right">
                         <video controls preload="metadata" class="w-full h-full object-cover">
-                            <source src="motion4.mp4" type="video/mp4">
+                            <source src="videos/videos-motion-graphics/motion4.mp4" type="video/mp4">
                         </video>
                     </div>
                 </div>
@@ -163,15 +189,15 @@
 
         <!-- DOCUMENTARY STYLE SECTION -->
         <section id="documentary" class="max-w-5xl mx-auto px-6">
-            <div class="text-center mb-16">
+            <div class="text-center mb-16 reveal-up">
                 <h2 class="text-4xl font-extrabold tracking-tight text-indigo-400" data-en="— Documentary style —" data-bg="— Документален стил —">— Documentary style —</h2>
             </div>
 
             <!-- Video 1: Main Highlight Video -->
-            <div class="mb-16">
+            <div class="mb-16 reveal-up">
                 <div class="aspect-video bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 shadow-xl">
                     <video controls preload="metadata" class="w-full h-full object-cover">
-                        <source src="doc1.mp4" type="video/mp4">
+                        <source src="videos/videos-documentary/doc1.mp4" type="video/mp4">
                     </video>
                 </div>
             </div>
@@ -180,12 +206,12 @@
             <div class="space-y-20">
                 <!-- Doc Project 2 -->
                 <div class="grid md:grid-cols-2 gap-10 items-center">
-                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg">
+                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg reveal-left">
                         <video controls preload="metadata" class="w-full h-full object-cover">
-                            <source src="doc2.mp4" type="video/mp4">
+                            <source src="videos/videos-documentary/doc2.mp4" type="video/mp4">
                         </video>
                     </div>
-                    <div class="space-y-3">
+                    <div class="space-y-3 reveal-right">
                         <h3 class="text-2xl font-bold text-white">Historical & Archival Essay</h3>
                         <p class="text-zinc-400 leading-relaxed text-sm" data-en="Historical documentary narrative with ancient Roman theme. Integration of 3D elements (statues and columns with relief), cinematic depth of field composition, film grain texturing, and stylized Roman typography titles." data-bg="Исторически документален разказ с древноримска тематика. Вграждане на 3D елементи (статуи и колони с релеф), кинематографично композиране с дълбочина на полето, текстуриране с филм грейни (film grain) и стилизирани типографски надписи с римски шрифтове.">
                             Исторически документален разказ с древноримска тематика. Вграждане на 3D елементи (статуи и колони с релеф), кинематографично композиране с дълбочина на полето, текстуриране с филм грейни (film grain) и стилизирани типографски надписи с римски шрифтове.
@@ -195,27 +221,27 @@
 
                 <!-- Doc Project 3 -->
                 <div class="grid md:grid-cols-2 gap-10 items-center">
-                    <div class="space-y-3 md:order-1 order-2">
+                    <div class="space-y-3 md:order-1 order-2 reveal-left">
                         <h3 class="text-2xl font-bold text-white">Investigative Video Breakdown</h3>
                         <p class="text-zinc-400 leading-relaxed text-sm" data-en="Geopolitical / investigative video focusing on data and transactions. Dynamic 3D infographics with interactive globe, wired money transfers tracking, activity metric markers, and map glow accents." data-bg="Геополитическо / разследващо видео с акцент върху данни и трансакции. Динамични 3D инфографики с интерактивен глобус, проследяване на парични преводи и маршрути (Wired money tracking), графични маркери с показатели на активност и светлинни акценти (glow ефекти) върху карти.">
                             Геополитическо / разследващо видео с акцент върху данни и трансакции. Динамични 3D инфографики с интерактивен глобус, проследяване на парични преводи и маршрути (Wired money tracking), графични маркери с показатели на активност и светлинни акценти (glow ефекти) върху карти.
                         </p>
                     </div>
-                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg md:order-2 order-1">
+                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg md:order-2 order-1 reveal-right">
                         <video controls preload="metadata" class="w-full h-full object-cover">
-                            <source src="doc3.mp4" type="video/mp4">
+                            <source src="videos/videos-documentary/doc3.mp4" type="video/mp4">
                         </video>
                     </div>
                 </div>
 
                 <!-- Doc Project 4 -->
                 <div class="grid md:grid-cols-2 gap-10 items-center">
-                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg">
+                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg reveal-left">
                         <video controls preload="metadata" class="w-full h-full object-cover">
-                            <source src="doc4.mp4" type="video/mp4">
+                            <source src="videos/videos-documentary/doc4.mp4" type="video/mp4">
                         </video>
                     </div>
-                    <div class="space-y-3">
+                    <div class="space-y-3 reveal-right">
                         <h3 class="text-2xl font-bold text-white">Personal Profile Mini-Doc</h3>
                         <p class="text-zinc-400 leading-relaxed text-sm" data-en="Dramatic documentary portrait. Layered composition with archival newspapers and documents, eye-censor bars, integrated 3D objects (pills bottles), and smooth transitions to sunset B-roll shots." data-bg="Драматичен документален портрет. Слоесто композиране с архивни вестници и документи, цензуриране с характерни ленти върху очите, интегриране на 3D обекти (бутилки с хапчета) и плавни преходи към атмосферни пейзажни кадри (B-roll) със залез.">
                             Драматичен документален портрет. Слоесто композиране с архивни вестници и документи, цензуриране с характерни ленти върху очите, интегриране на 3D обекти (бутилки с хапчета) и плавни преходи към атмосферни пейзажни кадри (B-roll) със залез.
@@ -225,15 +251,15 @@
 
                 <!-- Doc Project 5 -->
                 <div class="grid md:grid-cols-2 gap-10 items-center">
-                    <div class="space-y-3 md:order-1 order-2">
+                    <div class="space-y-3 md:order-1 order-2 reveal-left">
                         <h3 class="text-2xl font-bold text-white">Cultural & Travel Documentary</h3>
                         <p class="text-zinc-400 leading-relaxed text-sm" data-en="Geographical / cartel investigative essay featuring transaction data. Vector world map cash flow tracking, animated geographical nodes, real-time marker scaling, and financial amount representations." data-bg="Географски / картелн разследващ есей с данни за трансакции. Векторно проследяване на парични потоци по картата на света, анимирани географски възли, мащабиране на маркери в реално време и графично отразяване на финансови суми.">
                             Географски / картелн разследващ есей с данни за трансакции. Векторно проследяване на парични потоци по картата на света, анимирани географски възли, мащабиране на маркери в реално време и графично отразяване на финансови суми.
                         </p>
                     </div>
-                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg md:order-2 order-1">
+                    <div class="aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 shadow-lg md:order-2 order-1 reveal-right">
                         <video controls preload="metadata" class="w-full h-full object-cover">
-                            <source src="doc5.mp4" type="video/mp4">
+                            <source src="videos/videos-documentary/doc5.mp4" type="video/mp4">
                         </video>
                     </div>
                 </div>
@@ -241,7 +267,7 @@
         </section>
 
         <!-- COLOR GRADING SECTION -->
-        <section id="color-grading" class="max-w-5xl mx-auto px-6">
+        <section id="color-grading" class="max-w-5xl mx-auto px-6 reveal-up">
             <div class="text-center mb-10">
                 <h2 class="text-4xl font-extrabold tracking-tight" data-en="Color grading" data-bg="Цветови корекции">Color grading</h2>
                 <p class="text-zinc-400 text-sm max-w-2xl mx-auto mt-3 leading-relaxed" data-en="Color grading is the key element for building a cinematic atmosphere. Transforming flat raw video footage (RAW Log) into a precisely profiled color palette (Rec.709) ensures shadow depth, accurate skin tones, and deep emotional impact." data-bg="Цветовата обработка е ключовият елемент за изграждане на кинематографична атмосфера. Трансформирането на плоския суров видео материал (RAW Log) в прецизно профилирана цветова палитра (Rec.709) гарантира дълбочина в сенките, точен оттенък на кожата и дълбоко емоционално въздействие.">
@@ -252,12 +278,12 @@
             <!-- Before / After Interactive Slider Frame -->
             <div class="relative w-full aspect-video rounded-2xl overflow-hidden border border-zinc-800 select-none shadow-2xl bg-zinc-900" id="slider-container">
                 <!-- Base Image: Graded Rec.709 (Background) -->
-                <img src="after.jpg" alt="Graded" class="absolute inset-0 w-full h-full object-cover">
-                <span class="absolute top-4 right-4 z-10 bg-emerald-500/90 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full font-bold tracking-wider shadow-lg">GRADED (Rec.709)</span>
+                <img src="images/images-color-grading/after.jpg" alt="Graded" class="absolute inset-0 w-full h-full object-cover pointer-events-none">
+                <span class="absolute top-4 right-4 z-10 bg-emerald-500/95 backdrop-blur-md text-white text-xs px-3.5 py-1.5 rounded-full font-bold tracking-wider shadow-lg">GRADED (Rec.709)</span>
 
                 <!-- Overlay Image: RAW Log (Clipped dynamically via JS) -->
-                <img src="before.jpg" id="before-img" alt="RAW Log" class="absolute inset-0 w-full h-full object-cover pointer-events-none z-10" style="clip-path: inset(0 50% 0 0);">
-                <span class="absolute top-4 left-4 z-20 bg-zinc-900/90 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full font-bold tracking-wider shadow-lg">RAW LOG</span>
+                <img src="images/images-color-grading/before.jpg" id="before-img" alt="RAW Log" class="absolute inset-0 w-full h-full object-cover pointer-events-none z-10" style="clip-path: inset(0 50% 0 0);">
+                <span class="absolute top-4 left-4 z-20 bg-zinc-900/95 backdrop-blur-md text-white text-xs px-3.5 py-1.5 rounded-full font-bold tracking-wider shadow-lg">RAW LOG</span>
 
                 <!-- Vertical Handle Line -->
                 <div class="absolute top-0 bottom-0 left-1/2 w-1 bg-white cursor-ew-resize -ml-0.5 z-30 flex items-center justify-center shadow-[0_0_12px_rgba(255,255,255,0.8)]" id="slider-handle">
@@ -270,7 +296,7 @@
 
         <!-- EVERYTHING I USE SECTION -->
         <section id="tools" class="max-w-5xl mx-auto px-6">
-            <div class="text-center mb-12">
+            <div class="text-center mb-12 reveal-up">
                 <h2 class="text-4xl font-extrabold tracking-tight" data-en="Everything I use" data-bg="Инструменти и софтуер">Everything I use</h2>
             </div>
 
@@ -278,57 +304,57 @@
             <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
                 
                 <!-- DaVinci Resolve -->
-                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-indigo-500/50 transition duration-300 group">
+                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-indigo-500/50 transition duration-300 group reveal-up">
                     <div class="w-20 h-20 rounded-2xl overflow-hidden mb-4 group-hover:scale-110 transition duration-300 shadow-xl p-2 bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                        <img src="davinci.png" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/4d/DaVinci_Resolve_Studio_18_icon.png';" alt="DaVinci Resolve" class="w-full h-full object-contain">
+                        <img src="images/images-tools/davinci.png" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/4d/DaVinci_Resolve_Studio_18_icon.png';" alt="DaVinci Resolve" class="w-full h-full object-contain">
                     </div>
                     <h3 class="font-bold text-white text-base">DaVinci Resolve</h3>
                     <p class="text-xs text-zinc-400 mt-1" data-en="Edit, Fusion, Color Grading" data-bg="Монтаж, Fusion, Цветови корекции">Edit, Fusion, Color Grading</p>
                 </div>
 
                 <!-- Blender -->
-                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-orange-500/50 transition duration-300 group">
+                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-orange-500/50 transition duration-300 group reveal-up">
                     <div class="w-20 h-20 rounded-2xl overflow-hidden mb-4 group-hover:scale-110 transition duration-300 shadow-xl p-2 bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                        <img src="blender.png" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/0/0c/Blender_logo_no_text.svg';" alt="Blender" class="w-full h-full object-contain">
+                        <img src="images/images-tools/blender.png" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/0/0c/Blender_logo_no_text.svg';" alt="Blender" class="w-full h-full object-contain">
                     </div>
                     <h3 class="font-bold text-white text-base">Blender</h3>
                     <p class="text-xs text-zinc-400 mt-1" data-en="3D Modeling & Motion" data-bg="3D Моделиране и Моушън">3D Modeling & Motion</p>
                 </div>
 
                 <!-- Google Gemini -->
-                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-blue-500/50 transition duration-300 group">
+                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-blue-500/50 transition duration-300 group reveal-up">
                     <div class="w-20 h-20 rounded-2xl overflow-hidden mb-4 group-hover:scale-110 transition duration-300 shadow-xl p-2 bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                        <img src="gemini.png" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg';" alt="Google Gemini" class="w-full h-full object-contain">
+                        <img src="images/images-tools/gemini.png" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg';" alt="Google Gemini" class="w-full h-full object-contain">
                     </div>
                     <h3 class="font-bold text-white text-base">Google Gemini</h3>
                     <p class="text-xs text-zinc-400 mt-1" data-en="Scriptwriting & AI Research" data-bg="Сценарии и AI изследвания">Scriptwriting & AI Research</p>
                 </div>
 
                 <!-- ChatGPT -->
-                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-emerald-500/50 transition duration-300 group">
+                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-emerald-500/50 transition duration-300 group reveal-up">
                     <div class="w-20 h-20 rounded-2xl overflow-hidden mb-4 group-hover:scale-110 transition duration-300 shadow-xl p-2 bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                        <img src="chatgpt.png" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg';" alt="ChatGPT" class="w-full h-full object-contain">
+                        <img src="images/images-tools/chatgpt.png" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg';" alt="ChatGPT" class="w-full h-full object-contain">
                     </div>
                     <h3 class="font-bold text-white text-base">ChatGPT</h3>
                     <p class="text-xs text-zinc-400 mt-1" data-en="Workflow & Storytelling AI" data-bg="Работен процес и сторитълинг">Workflow & Storytelling AI</p>
                 </div>
 
                 <!-- Claude -->
-                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-rose-500/50 transition duration-300 group">
+                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-rose-500/50 transition duration-300 group reveal-up">
                     <div class="w-20 h-20 rounded-2xl overflow-hidden mb-4 group-hover:scale-110 transition duration-300 shadow-xl p-2 bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                        <img src="claude.png" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/7/70/Claude_AI_logo.svg';" alt="Claude" class="w-full h-full object-contain">
+                        <img src="images/images-tools/claude.png" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/7/70/Claude_AI_logo.svg';" alt="Claude" class="w-full h-full object-contain">
                     </div>
                     <h3 class="font-bold text-white text-base">Claude</h3>
                     <p class="text-xs text-zinc-400 mt-1" data-en="Creative Writing & Editing" data-bg="Креативно писане и редакция">Creative Writing & Editing</p>
                 </div>
 
                 <!-- Higgsfield AI -->
-                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-purple-500/50 transition duration-300 group">
+                <div class="bg-zinc-900/60 border border-zinc-800/80 p-6 rounded-2xl flex flex-col items-center text-center hover:border-purple-500/50 transition duration-300 group reveal-up">
                     <div class="w-20 h-20 rounded-2xl overflow-hidden mb-4 group-hover:scale-110 transition duration-300 shadow-xl p-2 bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                        <img src="higgsfield.png" alt="Higgsfield AI" class="w-full h-full object-contain">
+                        <img src="images/images-tools/higgsfield.png" alt="Higgsfield AI" class="w-full h-full object-contain">
                     </div>
                     <h3 class="font-bold text-white text-base">Higgsfield</h3>
-                    <p class="text-xs text-zinc-400 mt-1" data-en="AI Video Generation" data-bg="AI генериране на видеа">AI Video Generation</p>
+                    <p class="text-xs text-zinc-400 mt-1" data-en="AI Video Generation" data-bg="AI генериране на видеа">AI генериране на видеа</p>
                 </div>
 
             </div>
@@ -336,11 +362,11 @@
 
         <!-- ABOUT ME SECTION -->
         <section id="about" class="max-w-5xl mx-auto px-6">
-            <div class="text-center mb-12">
+            <div class="text-center mb-12 reveal-up">
                 <h2 class="text-4xl font-extrabold tracking-tight" data-en="About me" data-bg="За мен">About me</h2>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-12 items-center bg-zinc-900/40 border border-zinc-800/80 p-8 md:p-12 rounded-3xl">
+            <div class="grid md:grid-cols-2 gap-12 items-center bg-zinc-900/40 border border-zinc-800/80 p-8 md:p-12 rounded-3xl mb-12 reveal-up">
                 <!-- Bio Text Left -->
                 <div class="space-y-6">
                     <div>
@@ -387,14 +413,200 @@
                 <!-- Photo Frame Right -->
                 <div class="flex justify-center">
                     <div class="w-64 h-80 rounded-2xl overflow-hidden bg-zinc-800 border-2 border-zinc-700/60 shadow-2xl relative group">
-                        <img src="profile.jpg" alt="Алекс Генов" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <img src="images/images-hero/profile.jpg" alt="Алекс Генов" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     </div>
+                </div>
+            </div>
+
+            <!-- CERTIFICATES SECTION -->
+            <div class="bg-zinc-900/40 border border-zinc-800/80 p-8 md:p-12 rounded-3xl space-y-8 reveal-up">
+                <div class="text-center">
+                    <h3 class="text-2xl font-bold text-white" data-en="Certificates & Credentials" data-bg="Сертификати и квалификации">Сертификати и квалификации</h3>
+                    <p class="text-zinc-400 text-sm mt-2" data-en="Verified professional masterclasses and academic achievements" data-bg="Професионални мастеркласове и академични постижения">Професионални мастеркласове и академични постижения</p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Cert 1 -->
+                    <div class="bg-zinc-900/90 border border-zinc-800 p-5 rounded-2xl flex flex-col justify-between hover:border-indigo-500/50 transition duration-300 shadow-lg group space-y-4">
+                        <div class="aspect-video w-full rounded-lg overflow-hidden bg-zinc-950 border border-zinc-800">
+                            <img src="images/images-certificates/cert1.png" alt="DaVinci Resolve 21 Masterclass" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="space-y-2">
+                            <span class="inline-block px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded-md border border-emerald-500/20">Skillshare</span>
+                            <h4 class="font-bold text-white text-base group-hover:text-indigo-400 transition">DaVinci Resolve 21 Masterclass</h4>
+                            <p class="text-xs text-zinc-400" data-en="The Complete Video Editing & Color Grading Class (2026)" data-bg="Пълен клас по видео монтаж и цветови корекции">The Complete Video Editing & Color Grading Class (2026)</p>
+                        </div>
+                        <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-500">
+                            <span>10/12/2026</span>
+                            <span class="text-zinc-400">ID: 494c1317</span>
+                        </div>
+                    </div>
+
+                    <!-- Cert 2 -->
+                    <div class="bg-zinc-900/90 border border-zinc-800 p-5 rounded-2xl flex flex-col justify-between hover:border-indigo-500/50 transition duration-300 shadow-lg group space-y-4">
+                        <div class="aspect-video w-full rounded-lg overflow-hidden bg-zinc-950 border border-zinc-800">
+                            <img src="images/images-certificates/cert2.png" alt="Edit Faster in DaVinci Resolve" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="space-y-2">
+                            <span class="inline-block px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded-md border border-emerald-500/20">Skillshare</span>
+                            <h4 class="font-bold text-white text-base group-hover:text-indigo-400 transition">Edit Faster in DaVinci Resolve</h4>
+                            <p class="text-xs text-zinc-400" data-en="Speed Up Your Workflow Like a Pro." data-bg="Ускори работния си процес като професионалист.">Speed Up Your Workflow Like a Pro.</p>
+                        </div>
+                        <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-500">
+                            <span>10/15/2026</span>
+                            <span class="text-zinc-400">ID: 0243bfd7</span>
+                        </div>
+                    </div>
+
+                    <!-- Cert 3 -->
+                    <div class="bg-zinc-900/90 border border-zinc-800 p-5 rounded-2xl flex flex-col justify-between hover:border-indigo-500/50 transition duration-300 shadow-lg group space-y-4">
+                        <div class="aspect-video w-full rounded-lg overflow-hidden bg-zinc-950 border border-zinc-800">
+                            <img src="images/images-certificates/cert3.png" alt="DaVinci Resolve - YouTube Workflow" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="space-y-2">
+                            <span class="inline-block px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded-md border border-emerald-500/20">Skillshare</span>
+                            <h4 class="font-bold text-white text-base group-hover:text-indigo-400 transition">DaVinci Resolve - YouTube Workflow</h4>
+                            <p class="text-xs text-zinc-400" data-en="Edit Faster - A YouTube Workflow for Creators." data-bg="Работен процес за създатели на съдържание в YouTube.">Edit Faster - A YouTube Workflow for Creators.</p>
+                        </div>
+                        <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-500">
+                            <span>10/15/2026</span>
+                            <span class="text-zinc-400">ID: b93f48fd</span>
+                        </div>
+                    </div>
+
+                    <!-- Cert 4 -->
+                    <div class="bg-zinc-900/90 border border-zinc-800 p-5 rounded-2xl flex flex-col justify-between hover:border-indigo-500/50 transition duration-300 shadow-lg group space-y-4">
+                        <div class="aspect-video w-full rounded-lg overflow-hidden bg-zinc-950 border border-zinc-800">
+                            <img src="images/images-certificates/cert4.png" alt="DaVinci Resolve Fusion Masterclass" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="space-y-2">
+                            <span class="inline-block px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded-md border border-emerald-500/20">Skillshare</span>
+                            <h4 class="font-bold text-white text-base group-hover:text-indigo-400 transition">DaVinci Resolve Fusion Masterclass</h4>
+                            <p class="text-xs text-zinc-400" data-en="Learn VFX, Motion Graphics & Text Animation from Scratch." data-bg="Научи VFX, моушън графика и текстови анимации от нулата.">Learn VFX, Motion Graphics & Text Animation from Scratch.</p>
+                        </div>
+                        <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-500">
+                            <span>10/14/2026</span>
+                            <span class="text-zinc-400">ID: d11f21f5</span>
+                        </div>
+                    </div>
+
+                    <!-- Cert 5 -->
+                    <div class="bg-zinc-900/90 border border-zinc-800 p-5 rounded-2xl flex flex-col justify-between hover:border-indigo-500/50 transition duration-300 shadow-lg group space-y-4">
+                        <div class="aspect-video w-full rounded-lg overflow-hidden bg-zinc-950 border border-zinc-800">
+                            <img src="images/images-certificates/cert5.png" alt="UX Design" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="space-y-2">
+                            <span class="inline-block px-2.5 py-0.5 bg-indigo-500/10 text-indigo-400 text-[10px] font-bold uppercase tracking-wider rounded-md border border-indigo-500/20">SoftUni Creative</span>
+                            <h4 class="font-bold text-white text-base group-hover:text-indigo-400 transition">UX Design</h4>
+                            <p class="text-xs text-zinc-400" data-en="Completed with distinction (Score: 6.00 / 6.00)" data-bg="Завършен с отличен успех (Оценка: 6.00 / 6.00)">Completed with distinction (Score: 6.00 / 6.00)</p>
+                        </div>
+                        <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-500">
+                            <span>04/04/2022</span>
+                            <span class="text-zinc-400">Score: 6.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Cert 6 -->
+                    <div class="bg-zinc-900/90 border border-zinc-800 p-5 rounded-2xl flex flex-col justify-between hover:border-indigo-500/50 transition duration-300 shadow-lg group space-y-4">
+                        <div class="aspect-video w-full rounded-lg overflow-hidden bg-zinc-950 border border-zinc-800">
+                            <img src="images/images-certificates/cert6.png" alt="Design Basics" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="space-y-2">
+                            <span class="inline-block px-2.5 py-0.5 bg-indigo-500/10 text-indigo-400 text-[10px] font-bold uppercase tracking-wider rounded-md border border-indigo-500/20">SoftUni Creative</span>
+                            <h4 class="font-bold text-white text-base group-hover:text-indigo-400 transition">Design Basics</h4>
+                            <p class="text-xs text-zinc-400" data-en="Honorable Mention (Score: 5.73 / 6.00)" data-bg="Почетно отличие (Оценка: 5.73 / 6.00)">Honorable Mention (Score: 5.73 / 6.00)</p>
+                        </div>
+                        <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-500">
+                            <span>06/12/2021</span>
+                            <span class="text-zinc-400">Score: 5.73</span>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
 
+        <!-- CLIENT FEEDBACK SECTION -->
+        <section id="testimonials" class="max-w-5xl mx-auto px-6">
+            <div class="text-center mb-12 reveal-up">
+                <h2 class="text-4xl font-extrabold tracking-tight" data-en="Client Feedback" data-bg="Отзиви от клиенти">Client Feedback</h2>
+                <p class="text-zinc-400 text-sm mt-2" data-en="Some of the partners and clients I've worked with" data-bg="Част от партньорите и клиентите, с които съм работил">Част от партньорите и клиентите, с които съм работил</p>
+            </div>
+
+            <!-- Centered Testimonials Grid Container -->
+            <div class="flex flex-col items-center gap-6">
+                
+                <!-- Top Row (3 items) -->
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+                    
+                    <!-- Client 1: studio voila -->
+                    <div class="bg-zinc-900/40 border border-zinc-800/80 p-6 rounded-3xl flex flex-col items-center text-center space-y-4 hover:border-indigo-500/50 transition duration-300 shadow-xl reveal-up">
+                        <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-indigo-500/40 shadow-lg bg-zinc-800">
+                            <img src="images/images-feedback/voila.png" alt="studio voila" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">studio voila</h3>
+                        </div>
+                        <p class="text-zinc-400 text-sm italic" data-en="&ldquo;Feedback&rdquo;" data-bg="&ldquo;мнение&rdquo;">„мнение“</p>
+                    </div>
+
+                    <!-- Client 2: Investclub -->
+                    <div class="bg-zinc-900/40 border border-zinc-800/80 p-6 rounded-3xl flex flex-col items-center text-center space-y-4 hover:border-indigo-500/50 transition duration-300 shadow-xl reveal-up">
+                        <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-indigo-500/40 shadow-lg bg-zinc-800">
+                            <img src="images/images-feedback/investclub.png" alt="Investclub" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Investclub</h3>
+                        </div>
+                        <p class="text-zinc-400 text-sm italic" data-en="&ldquo;Feedback&rdquo;" data-bg="&ldquo;мнение&rdquo;">„мнение“</p>
+                    </div>
+
+                    <!-- Client 3: Georgi Beyond -->
+                    <div class="bg-zinc-900/40 border border-zinc-800/80 p-6 rounded-3xl flex flex-col items-center text-center space-y-4 hover:border-indigo-500/50 transition duration-300 shadow-xl reveal-up">
+                        <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-indigo-500/40 shadow-lg bg-zinc-800">
+                            <img src="images/images-feedback/georgi.jpg" alt="Georgi Beyond" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Georgi Beyond</h3>
+                        </div>
+                        <p class="text-zinc-400 text-sm italic" data-en="&ldquo;Feedback&rdquo;" data-bg="&ldquo;мнение&rdquo;">„мнение“</p>
+                    </div>
+
+                </div>
+
+                <!-- Bottom Row (2 items - Centered symmetrically) -->
+                <div class="grid sm:grid-cols-2 gap-6 w-full max-w-2xl">
+                    
+                    <!-- Client 4: ZaroAIz -->
+                    <div class="bg-zinc-900/40 border border-zinc-800/80 p-6 rounded-3xl flex flex-col items-center text-center space-y-4 hover:border-indigo-500/50 transition duration-300 shadow-xl reveal-up">
+                        <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-indigo-500/40 shadow-lg bg-zinc-800">
+                            <img src="images/images-feedback/zaro.png" alt="ZaroAIz" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">ZaroAIz</h3>
+                        </div>
+                        <p class="text-zinc-400 text-sm italic" data-en="&ldquo;Feedback&rdquo;" data-bg="&ldquo;мнение&rdquo;">„мнение“</p>
+                    </div>
+
+                    <!-- Client 5: Victor Kodjabashev -->
+                    <div class="bg-zinc-900/40 border border-zinc-800/80 p-6 rounded-3xl flex flex-col items-center text-center space-y-4 hover:border-indigo-500/50 transition duration-300 shadow-xl reveal-up">
+                        <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-indigo-500/40 shadow-lg bg-zinc-800">
+                            <img src="images/images-feedback/victor.jpg" alt="Victor Kodjabashev" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Victor Kodjabashev</h3>
+                        </div>
+                        <p class="text-zinc-400 text-sm italic" data-en="&ldquo;Feedback&rdquo;" data-bg="&ldquo;мнение&rdquo;">„мнение“</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
         <!-- CTA SECTION -->
-        <section id="contact" class="max-w-4xl mx-auto px-6 text-center">
+        <section id="contact" class="max-w-4xl mx-auto px-6 text-center reveal-up">
             <div class="bg-gradient-to-b from-indigo-950/40 to-zinc-900/60 border border-indigo-500/20 p-10 md:p-16 rounded-3xl space-y-6">
                 <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight" data-en="Ready for the next project?" data-bg="Готов ли си за следващия проект?">
                     Готов ли си за следващия проект?
@@ -407,7 +619,7 @@
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
                             <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                         </svg>
-                        <span data-en="Start project on Instagram" data-bg="Започни проект в Instagram">Започни проект в Instagram</span>
+                        <span data-en="DM me on Instagram" data-bg="Пиши ми на лично в Instagram">Пиши ми на лично в Instagram</span>
                     </a>
                 </div>
             </div>
@@ -416,7 +628,7 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="border-t border-zinc-800/50 py-8 text-center text-xs text-zinc-500">
+    <footer class="border-t border-zinc-800/50 py-8 text-center text-xs text-zinc-500 reveal-up">
         <p data-en="© 2026 ALEXGENOV.MOTION. All rights reserved." data-bg="© 2026 ALEXGENOV.MOTION. Всички права са запазени.">© 2026 ALEXGENOV.MOTION. Всички права са запазени.</p>
     </footer>
 
@@ -427,11 +639,15 @@
         function toggleLanguage() {
             currentLang = currentLang === 'bg' ? 'en' : 'bg';
             
-            const btn = document.getElementById('lang-toggle');
+            const bgSpan = document.getElementById('lang-bg-span');
+            const enSpan = document.getElementById('lang-en-span');
+
             if (currentLang === 'en') {
-                btn.innerHTML = '<span class="text-indigo-400">BG</span> / EN';
+                bgSpan.classList.remove('text-indigo-400');
+                enSpan.classList.add('text-indigo-400');
             } else {
-                btn.innerHTML = 'BG / <span class="text-indigo-400">EN</span>';
+                enSpan.classList.remove('text-indigo-400');
+                bgSpan.classList.add('text-indigo-400');
             }
 
             const elements = document.querySelectorAll('[data-en][data-bg]');
@@ -444,7 +660,43 @@
             });
         }
 
-        // Color Grading Slider Logic
+        // Direct Smooth Scroll Function for Navigation
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                const headerHeight = document.querySelector('header').offsetHeight;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerHeight - 20;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Scroll Reveal Animation (Intersection Observer)
+        document.addEventListener("DOMContentLoaded", () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('reveal-active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const revealElements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
+            revealElements.forEach(el => observer.observe(el));
+        });
+
+        // Color Grading Slider Logic (with mobile touch drag support)
         const container = document.getElementById('slider-container');
         const beforeImg = document.getElementById('before-img');
         const handle = document.getElementById('slider-handle');
@@ -463,6 +715,7 @@
             handle.style.left = `${percentage}%`;
         }
 
+        // Mouse events
         container.addEventListener('mousedown', (e) => {
             isDragging = true;
             setSliderPosition(e.clientX);
@@ -475,15 +728,22 @@
             setSliderPosition(e.clientX);
         });
 
+        // Touch events for mobile devices
         container.addEventListener('touchstart', (e) => {
             isDragging = true;
-            setSliderPosition(e.touches[0].clientX);
-        });
+            if (e.touches && e.touches[0]) {
+                setSliderPosition(e.touches[0].clientX);
+            }
+        }, { passive: true });
+
         window.addEventListener('touchend', () => isDragging = false);
+
         window.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            setSliderPosition(e.touches[0].clientX);
-        });
+            if (e.touches && e.touches[0]) {
+                setSliderPosition(e.touches[0].clientX);
+            }
+        }, { passive: true });
     </script>
 </body>
 </html>
